@@ -3,10 +3,13 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const APP_ID = "com.gafipro.gafipresence";
+const GAME_LOGO_URLS = {
+  rocket_league: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Rocket_League_logo.svg/512px-Rocket_League_logo.svg.png",
+  minecraft: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Minecraft_Logo-en.svg/512px-Minecraft_Logo-en.svg.png",
+  fortnite: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/FortniteLogo.svg/512px-FortniteLogo.svg.png"
+};
 const BUILTIN_IMAGE_URLS = {
-  rocket_league: "https://raw.githubusercontent.com/GafiPro/GafiPresence/main/assets/presets/games/rocket-league.webp",
-  minecraft: "https://raw.githubusercontent.com/GafiPro/GafiPresence/main/assets/presets/games/minecraft.webp",
-  fortnite: "https://raw.githubusercontent.com/GafiPro/GafiPresence/main/assets/presets/games/fortnite.webp",
+  ...GAME_LOGO_URLS,
   gafi_aurora: "https://raw.githubusercontent.com/GafiPro/GafiPresence/main/assets/presets/large/aurora.webp",
   gafi_circuit: "https://raw.githubusercontent.com/GafiPro/GafiPresence/main/assets/presets/large/circuit.webp",
   gafi_grid: "https://raw.githubusercontent.com/GafiPro/GafiPresence/main/assets/presets/large/grid.webp"
@@ -31,10 +34,10 @@ const defaultSettings = {
     state: "GafiPresence",
     largeImageKey: "rocket_league",
     largeImageText: "Rocket League",
-    largeImagePath: "builtin:games/rocket-league.webp",
+    largeImagePath: "external:" + GAME_LOGO_URLS.rocket_league,
     smallImageKey: "minecraft",
     smallImageText: "Minecraft",
-    smallImagePath: "builtin:games/minecraft.webp",
+    smallImagePath: "external:" + GAME_LOGO_URLS.minecraft,
     timerMode: "elapsed",
     countdownMinutes: 60,
     elapsedSeconds: 0,
@@ -80,14 +83,30 @@ function mergeSettings(saved) {
   const legacySmall = {
     "builtin:small/orbit.svg": ["gafi_grid", "builtin:large/grid.webp"],
     "builtin:small/code.svg": ["gafi_circuit", "builtin:large/circuit.webp"],
-    "builtin:small/controller.svg": ["rocket_league", "builtin:games/rocket-league.webp"],
-    "builtin:small/music.svg": ["minecraft", "builtin:games/minecraft.webp"]
+    "builtin:small/controller.svg": ["rocket_league", "external:" + GAME_LOGO_URLS.rocket_league],
+    "builtin:small/music.svg": ["minecraft", "external:" + GAME_LOGO_URLS.minecraft]
   };
   if (!result.activity.largeImageKey && legacyLarge[result.activity.largeImagePath]) {
     [result.activity.largeImageKey, result.activity.largeImagePath] = legacyLarge[result.activity.largeImagePath];
   }
   if (!result.activity.smallImageKey && legacySmall[result.activity.smallImagePath]) {
     [result.activity.smallImageKey, result.activity.smallImagePath] = legacySmall[result.activity.smallImagePath];
+  }
+  // Migra os presets de logótipos antigos para os logótipos oficiais alojados no Wikimedia Commons.
+  const gamePathMigrations = {
+    "builtin:games/rocket-league.webp": ["rocket_league", "external:" + GAME_LOGO_URLS.rocket_league],
+    "builtin:games/minecraft.webp": ["minecraft", "external:" + GAME_LOGO_URLS.minecraft],
+    "builtin:games/fortnite.webp": ["fortnite", "external:" + GAME_LOGO_URLS.fortnite]
+  };
+  if (gamePathMigrations[result.activity.largeImagePath]) {
+    const [key, imagePath] = gamePathMigrations[result.activity.largeImagePath];
+    result.activity.largeImageKey = key;
+    result.activity.largeImagePath = imagePath;
+  }
+  if (gamePathMigrations[result.activity.smallImagePath]) {
+    const [key, imagePath] = gamePathMigrations[result.activity.smallImagePath];
+    result.activity.smallImageKey = key;
+    result.activity.smallImagePath = imagePath;
   }
   result.presets = Array.isArray(saved.presets) ? saved.presets.filter((item) => item && typeof item === "object") : [];
   return result;
@@ -107,7 +126,7 @@ function saveSettings() {
 }
 
 function imageData(pathValue) {
-  if (!pathValue || String(pathValue).startsWith("builtin:")) return null;
+  if (!pathValue || String(pathValue).startsWith("builtin:") || String(pathValue).startsWith("external:")) return null;
   try {
     const ext = path.extname(pathValue).toLowerCase();
     const mime = ext === ".jpg" || ext === ".jpeg" ? "image/jpeg" :
@@ -272,10 +291,13 @@ function createActivity(source) {
     const elapsed = Number.isFinite(parsedElapsed) ? Math.max(0, parsedElapsed) : 0;
     // A única fronteira é a gama válida do Date do JavaScript (muito além de qualquer uso prático).
     const maxElapsedSeconds = 8.64e12;
-    activity.startTimestamp = new Date(Date.now() - Math.min(elapsed, maxElapsedSeconds) * 1000);
+    const nowUnixSeconds = Math.floor(Date.now() / 1000);
+    // A biblioteca RPC envia Date.getTime() em milissegundos, mas o Discord exige Unix time em segundos.
+    // Passar um número em segundos evita o erro "Child activity fails" na validação de timestamps.
+    activity.startTimestamp = Math.max(1, nowUnixSeconds - Math.floor(Math.min(elapsed, maxElapsedSeconds)));
   } else if (source.timerMode === "countdown") {
     const minutes = Math.max(1, Math.min(10080, Number(source.countdownMinutes) || 60));
-    activity.endTimestamp = new Date(Date.now() + minutes * 60000);
+    activity.endTimestamp = Math.floor(Date.now() / 1000) + minutes * 60;
   }
 
   const buttons = Array.isArray(source.buttons) ? source.buttons.slice(0, 2).map(validButton).filter(Boolean) : [];
