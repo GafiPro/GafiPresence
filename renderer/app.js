@@ -1,8 +1,8 @@
 const api = window.gafiPresence;
 const defaultPresets = [
-  { id: "starter-gaming", name: "Rocket League", description: "Uma presença pronta para as tuas partidas.", activity: { name: "GafiPresence", type: "PLAYING", details: "A jogar Rocket League", state: "Ranked 2v2 · Grinding", largeImageKey: "rocket_league", largeImageText: "Rocket League", largeImagePath: "external:https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c3/Rocket_League_logo.svg/1280px-Rocket_League_logo.svg.png", smallImageKey: "minecraft", smallImageText: "Minecraft", smallImagePath: "external:https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cb/Minecraft_Logo-en.svg/1280px-Minecraft_Logo-en.svg.png", timerMode: "elapsed", elapsedSeconds: 0, countdownMinutes: 60, buttons: [{label:"",url:""},{label:"",url:""}] } },
-  { id: "starter-coding", name: "Minecraft", description: "Uma imagem voxel para o teu modo de programação.", activity: { name: "GafiPresence", type: "PLAYING", details: "A construir algo novo", state: "Creative mode", largeImageKey: "minecraft", largeImageText: "Minecraft", largeImagePath: "external:https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cb/Minecraft_Logo-en.svg/1280px-Minecraft_Logo-en.svg.png", smallImageKey: "gafi_grid", smallImageText: "Coding", smallImagePath: "builtin:large/grid.webp", timerMode: "elapsed", elapsedSeconds: 0, countdownMinutes: 60, buttons: [{label:"",url:""},{label:"",url:""}] } },
-  { id: "starter-fortnite", name: "Fortnite", description: "Uma presença colorida para as tuas sessões.", activity: { name: "GafiPresence", type: "PLAYING", details: "A jogar Fortnite", state: "Battle Royale", largeImageKey: "fortnite", largeImageText: "Fortnite", largeImagePath: "external:https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0e/FortniteLogo.svg/1280px-FortniteLogo.svg.png", smallImageKey: "rocket_league", smallImageText: "Gaming", smallImagePath: "external:https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c3/Rocket_League_logo.svg/1280px-Rocket_League_logo.svg.png", timerMode: "elapsed", elapsedSeconds: 0, countdownMinutes: 60, buttons: [{label:"",url:""},{label:"",url:""}] } },
+  { id: "starter-gaming", name: "Rocket League", description: "Uma presença pronta para as tuas partidas.", activity: { name: "GafiPresence", type: "PLAYING", details: "A jogar Rocket League", state: "Ranked 2v2 · Grinding", largeImageKey: "rocket_league", largeImageText: "Rocket League", largeImagePath: "external:https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Rocket_League_logo.svg/1280px-Rocket_League_logo.svg.png", smallImageKey: "minecraft", smallImageText: "Minecraft", smallImagePath: "external:https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Minecraft_Logo-en.svg/1280px-Minecraft_Logo-en.svg.png", timerMode: "elapsed", elapsedSeconds: 0, countdownMinutes: 60, buttons: [{label:"",url:""},{label:"",url:""}] } },
+  { id: "starter-coding", name: "Minecraft", description: "Uma imagem voxel para o teu modo de programação.", activity: { name: "GafiPresence", type: "PLAYING", details: "A construir algo novo", state: "Creative mode", largeImageKey: "minecraft", largeImageText: "Minecraft", largeImagePath: "external:https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Minecraft_Logo-en.svg/1280px-Minecraft_Logo-en.svg.png", smallImageKey: "gafi_grid", smallImageText: "Coding", smallImagePath: "builtin:large/grid.webp", timerMode: "elapsed", elapsedSeconds: 0, countdownMinutes: 60, buttons: [{label:"",url:""},{label:"",url:""}] } },
+  { id: "starter-fortnite", name: "Fortnite", description: "Uma presença colorida para as tuas sessões.", activity: { name: "GafiPresence", type: "PLAYING", details: "A jogar Fortnite", state: "Battle Royale", largeImageKey: "fortnite", largeImageText: "Fortnite", largeImagePath: "external:https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/FortniteLogo.svg/1280px-FortniteLogo.svg.png", smallImageKey: "rocket_league", smallImageText: "Gaming", smallImagePath: "external:https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Rocket_League_logo.svg/1280px-Rocket_League_logo.svg.png", timerMode: "elapsed", elapsedSeconds: 0, countdownMinutes: 60, buttons: [{label:"",url:""},{label:"",url:""}] } },
   { id: "starter-aurora", name: "Aurora", description: "Um fundo abstrato e luminoso.", activity: { name: "GafiPresence", type: "WATCHING", details: "A desfrutar do momento", state: "Sem pressa.", largeImageKey: "gafi_aurora", largeImageText: "Aurora", largeImagePath: "builtin:large/aurora.webp", smallImageKey: "gafi_circuit", smallImageText: "Online", smallImagePath: "builtin:large/circuit.webp", timerMode: "none", elapsedSeconds: 0, countdownMinutes: 60, buttons: [{label:"",url:""},{label:"",url:""}] } }
 ];
 
@@ -215,9 +215,9 @@ function renderPresets() {
   });
 }
 const gameAssets = [
-  ["Rocket League","https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c3/Rocket_League_logo.svg/1280px-Rocket_League_logo.svg.png","rocket_league"],
-  ["Minecraft","https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cb/Minecraft_Logo-en.svg/1280px-Minecraft_Logo-en.svg.png","minecraft"],
-  ["Fortnite","https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0e/FortniteLogo.svg/1280px-FortniteLogo.svg.png","fortnite"]
+  ["Rocket League","https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Rocket_League_logo.svg/1280px-Rocket_League_logo.svg.png","rocket_league"],
+  ["Minecraft","https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Minecraft_Logo-en.svg/1280px-Minecraft_Logo-en.svg.png","minecraft"],
+  ["Fortnite","https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/FortniteLogo.svg/1280px-FortniteLogo.svg.png","fortnite"]
 ];
 const largeAssets = [
   ["Aurora","large/aurora.webp","gafi_aurora"],
@@ -368,11 +368,15 @@ function initEvents() {
     setFieldValues(); renderPreview();
   }));
   $("#apply-button").addEventListener("click", async () => {
-    await persistSettings();
-    timerStartedAt = Date.now();
-    renderPreview();
-    const result = await api.apply(currentActivity());
-    notify(result.message);
+    try {
+      await persistSettings();
+      timerStartedAt = Date.now();
+      renderPreview();
+      const result = await api.apply(currentActivity());
+      notify(result.message);
+    } catch (error) {
+      notify("Não foi possível aplicar a presença: " + (error.message || String(error)));
+    }
   });
   $("#clear-button").addEventListener("click", async () => {
     const result = await api.clear();
