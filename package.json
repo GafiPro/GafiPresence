@@ -1,6 +1,6 @@
 {
   "name": "gafipresence",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "description": "A customizable desktop editor for Discord Rich Presence.",
   "main": "main.cjs",
@@ -35,10 +35,12 @@
       "target": [
         {
           "target": "portable",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         }
       ],
-      "artifactName": "GafiPresence-0.2.0-Portable.exe"
+      "artifactName": "GafiPresence-0.2.1-Portable.exe"
     }
   }
 }
