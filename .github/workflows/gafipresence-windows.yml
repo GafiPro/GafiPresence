@@ -7,6 +7,13 @@ on:
       - "feat/**"
     paths:
       - ".github/workflows/gafipresence-windows.yml"
+      - ".gitignore"
+      - "README.md"
+      - "main.cjs"
+      - "preload.cjs"
+      - "package.json"
+      - "renderer/**"
+      - "assets/**"
   workflow_dispatch:
 
 jobs:
