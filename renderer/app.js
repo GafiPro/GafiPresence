@@ -173,13 +173,28 @@ function renderPresets() {
     actions.className = "preset-actions";
     const load = document.createElement("button");
     load.className = "button button-secondary";
-    load.textContent = "Carregar";
+    load.textContent = "Aplicar preset";
     load.addEventListener("click", async () => {
-      settings.activity = { ...settings.activity, ...deepClone(preset.activity), buttons: deepClone(preset.activity.buttons || settings.activity.buttons) };
-      timerStartedAt = Date.now();
-      imageData.large = await api.loadImage(settings.activity.largeImagePath);
-      imageData.small = await api.loadImage(settings.activity.smallImagePath);
-      setFieldValues(); renderPreview(); showPage("editor"); notify("Preset carregado no editor.");
+      try {
+        const presetActivity = deepClone(preset.activity || {});
+        settings.activity = {
+          ...settings.activity,
+          ...presetActivity,
+          buttons: deepClone(presetActivity.buttons || settings.activity.buttons || [{ label: "", url: "" }, { label: "", url: "" }])
+        };
+        timerStartedAt = Date.now();
+        imageData.large = await api.loadImage(settings.activity.largeImagePath);
+        imageData.small = await api.loadImage(settings.activity.smallImagePath);
+        setFieldValues();
+        renderPreview();
+        showPage("editor");
+        await persistSettings(false);
+        const result = await api.apply(currentActivity());
+        notify(result.ok ? 'Preset "' + preset.name + '" aplicado ao Discord.' :
+          'Preset carregado, mas não foi aplicado: ' + result.message);
+      } catch (error) {
+        notify("Não foi possível aplicar o preset: " + (error.message || String(error)));
+      }
     });
     actions.appendChild(load);
     if (!String(preset.id).startsWith("starter-")) {
@@ -223,6 +238,10 @@ function renderGallery(hostSelector, assets, kind) {
     image.src = isExternal ? file : "../assets/presets/" + file;
     image.alt = label;
     image.loading = "lazy";
+    image.addEventListener("error", () => {
+      image.src = "../assets/presets/large/nebula.svg";
+      image.title = "Não foi possível carregar esta imagem. Verifica a ligação à Internet.";
+    }, { once: true });
     const caption = document.createElement("span");
     caption.textContent = label;
     button.append(image, caption);
@@ -238,9 +257,16 @@ function renderGallery(hostSelector, assets, kind) {
       renderPreview();
       try {
         await persistSettings(false);
-        notify(label + " selecionado. Image Key preenchida: " + imageKey);
+        if (rpcStatus.connected) {
+          const result = await api.apply(currentActivity());
+          notify(result.ok ? label + " aplicado ao Discord." :
+            label + " selecionado, mas não foi aplicado: " + result.message);
+        } else {
+          notify(label + " selecionado. Image Key preenchida: " + imageKey +
+            ". Liga ao Discord e carrega em Aplicar presença.");
+        }
       } catch (error) {
-        notify("Não foi possível guardar a imagem: " + error.message);
+        notify("Não foi possível guardar/aplicar a imagem: " + (error.message || String(error)));
       }
       if ($("#page-assets").classList.contains("active")) renderAssets();
     });
