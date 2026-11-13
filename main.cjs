@@ -4,9 +4,9 @@ const path = require("node:path");
 
 const APP_ID = "com.gafipro.gafipresence";
 const GAME_LOGO_URLS = {
-  rocket_league: "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c3/Rocket_League_logo.svg/1280px-Rocket_League_logo.svg.png",
-  minecraft: "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cb/Minecraft_Logo-en.svg/1280px-Minecraft_Logo-en.svg.png",
-  fortnite: "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0e/FortniteLogo.svg/1280px-FortniteLogo.svg.png"
+  rocket_league: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Rocket_League_logo.svg/1280px-Rocket_League_logo.svg.png",
+  minecraft: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Minecraft_Logo-en.svg/1280px-Minecraft_Logo-en.svg.png",
+  fortnite: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/FortniteLogo.svg/1280px-FortniteLogo.svg.png"
 };
 const BUILTIN_IMAGE_URLS = {
   ...GAME_LOGO_URLS,
@@ -108,7 +108,25 @@ function mergeSettings(saved) {
     result.activity.smallImageKey = key;
     result.activity.smallImagePath = imagePath;
   }
-  result.presets = Array.isArray(saved.presets) ? saved.presets.filter((item) => item && typeof item === "object") : [];
+  function migrateGameImagePaths(activity) {
+    if (!activity || typeof activity !== "object") return activity;
+    const migrated = { ...activity };
+    for (const kind of ["large", "small"]) {
+      const key = String(migrated[kind + "ImageKey"] || "").trim().toLowerCase();
+      if (GAME_LOGO_URLS[key]) migrated[kind + "ImagePath"] = "external:" + GAME_LOGO_URLS[key];
+    }
+    return migrated;
+  }
+
+  result.activity = migrateGameImagePaths(result.activity);
+  result.presets = Array.isArray(saved.presets)
+    ? saved.presets
+        .filter((item) => item && typeof item === "object")
+        .map((item) => ({
+          ...item,
+          activity: migrateGameImagePaths(item.activity || {})
+        }))
+    : [];
   return result;
 }
 
