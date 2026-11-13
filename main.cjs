@@ -3,6 +3,14 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const APP_ID = "com.gafipro.gafipresence";
+const BUILTIN_IMAGE_URLS = {
+  rocket_league: "https://raw.githubusercontent.com/GafiPro/GafiPresence/main/assets/presets/games/rocket-league.webp",
+  minecraft: "https://raw.githubusercontent.com/GafiPro/GafiPresence/main/assets/presets/games/minecraft.webp",
+  fortnite: "https://raw.githubusercontent.com/GafiPro/GafiPresence/main/assets/presets/games/fortnite.webp",
+  gafi_aurora: "https://raw.githubusercontent.com/GafiPro/GafiPresence/main/assets/presets/large/aurora.webp",
+  gafi_circuit: "https://raw.githubusercontent.com/GafiPro/GafiPresence/main/assets/presets/large/circuit.webp",
+  gafi_grid: "https://raw.githubusercontent.com/GafiPro/GafiPresence/main/assets/presets/large/grid.webp"
+};
 let mainWindow = null;
 let rpcClient = null;
 let rpcReady = false;
@@ -21,12 +29,12 @@ const defaultSettings = {
     type: "PLAYING",
     details: "Customising my Discord presence",
     state: "GafiPresence",
-    largeImageKey: "",
-    largeImageText: "",
-    largeImagePath: "builtin:large/nebula.svg",
-    smallImageKey: "",
-    smallImageText: "",
-    smallImagePath: "builtin:small/orbit.svg",
+    largeImageKey: "rocket_league",
+    largeImageText: "Rocket League",
+    largeImagePath: "builtin:games/rocket-league.webp",
+    smallImageKey: "minecraft",
+    smallImageText: "Minecraft",
+    smallImagePath: "builtin:games/minecraft.webp",
     timerMode: "elapsed",
     countdownMinutes: 60,
     elapsedSeconds: 0,
@@ -60,6 +68,27 @@ function mergeSettings(saved) {
   result.activity.buttons = Array.isArray(saved.activity && saved.activity.buttons)
     ? saved.activity.buttons.slice(0, 2).map((button) => ({ label: String(button.label || ""), url: String(button.url || "") }))
     : result.activity.buttons;
+
+  // Migra as imagens de demonstração antigas para os novos assets públicos.
+  const legacyLarge = {
+    "builtin:large/nebula.svg": ["gafi_aurora", "builtin:large/aurora.webp"],
+    "builtin:large/grid.svg": ["gafi_grid", "builtin:large/grid.webp"],
+    "builtin:large/waves.svg": ["gafi_circuit", "builtin:large/circuit.webp"],
+    "builtin:large/aurora.svg": ["gafi_aurora", "builtin:large/aurora.webp"],
+    "builtin:large/circuit.svg": ["gafi_circuit", "builtin:large/circuit.webp"]
+  };
+  const legacySmall = {
+    "builtin:small/orbit.svg": ["gafi_grid", "builtin:large/grid.webp"],
+    "builtin:small/code.svg": ["gafi_circuit", "builtin:large/circuit.webp"],
+    "builtin:small/controller.svg": ["rocket_league", "builtin:games/rocket-league.webp"],
+    "builtin:small/music.svg": ["minecraft", "builtin:games/minecraft.webp"]
+  };
+  if (!result.activity.largeImageKey && legacyLarge[result.activity.largeImagePath]) {
+    [result.activity.largeImageKey, result.activity.largeImagePath] = legacyLarge[result.activity.largeImagePath];
+  }
+  if (!result.activity.smallImageKey && legacySmall[result.activity.smallImagePath]) {
+    [result.activity.smallImageKey, result.activity.smallImagePath] = legacySmall[result.activity.smallImagePath];
+  }
   result.presets = Array.isArray(saved.presets) ? saved.presets.filter((item) => item && typeof item === "object") : [];
   return result;
 }
@@ -208,6 +237,11 @@ function cleanText(value, maxLength = 128) {
   return String(value || "").trim().slice(0, maxLength);
 }
 
+function resolveImageKey(value) {
+  const key = cleanText(value, 256);
+  return BUILTIN_IMAGE_URLS[key.toLowerCase()] || key;
+}
+
 function validButton(button) {
   const label = cleanText(button && button.label, 32);
   const url = cleanText(button && button.url, 512);
@@ -228,14 +262,17 @@ function createActivity(source) {
   const types = { PLAYING: 0, LISTENING: 2, WATCHING: 3, COMPETING: 5 };
   if (Object.prototype.hasOwnProperty.call(types, source.type)) activity.type = types[source.type];
 
-  if (source.largeImageKey) activity.largeImageKey = cleanText(source.largeImageKey, 256);
+  if (source.largeImageKey) activity.largeImageKey = resolveImageKey(source.largeImageKey);
   if (source.largeImageText) activity.largeImageText = cleanText(source.largeImageText);
-  if (source.smallImageKey) activity.smallImageKey = cleanText(source.smallImageKey, 256);
+  if (source.smallImageKey) activity.smallImageKey = resolveImageKey(source.smallImageKey);
   if (source.smallImageText) activity.smallImageText = cleanText(source.smallImageText);
 
   if (source.timerMode === "elapsed") {
-    const elapsed = Math.max(0, Math.min(86400, Number(source.elapsedSeconds) || 0));
-    activity.startTimestamp = new Date(Date.now() - elapsed * 1000);
+    const parsedElapsed = Number(source.elapsedSeconds);
+    const elapsed = Number.isFinite(parsedElapsed) ? Math.max(0, parsedElapsed) : 0;
+    // A única fronteira é a gama válida do Date do JavaScript (muito além de qualquer uso prático).
+    const maxElapsedSeconds = 8.64e12;
+    activity.startTimestamp = new Date(Date.now() - Math.min(elapsed, maxElapsedSeconds) * 1000);
   } else if (source.timerMode === "countdown") {
     const minutes = Math.max(1, Math.min(10080, Number(source.countdownMinutes) || 60));
     activity.endTimestamp = new Date(Date.now() + minutes * 60000);
@@ -262,6 +299,29 @@ async function applyActivity(source) {
   }
 }
 
+function createDesktopShortcut() {
+  if (process.platform !== "win32") return;
+  const portableExe = process.env.PORTABLE_EXECUTABLE_FILE;
+  if (!portableExe || !fs.existsSync(portableExe)) return;
+
+  try {
+    const desktopPath = app.getPath("desktop");
+    const shortcutPath = path.join(desktopPath, "GafiPresence.lnk");
+    const options = {
+      target: portableExe,
+      cwd: path.dirname(portableExe),
+      description: "GafiPresence — Discord Rich Presence",
+      icon: portableExe,
+      iconIndex: 0
+    };
+    const operation = fs.existsSync(shortcutPath) ? "update" : "create";
+    const written = shell.writeShortcutLink(shortcutPath, operation, options);
+    if (!written) console.warn("[GafiPresence] Não foi possível criar o atalho do Ambiente de Trabalho.");
+  } catch (error) {
+    console.warn("[GafiPresence] Erro ao criar o atalho:", error);
+  }
+}
+
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1220,
@@ -270,6 +330,7 @@ function createWindow() {
     minHeight: 700,
     backgroundColor: "#0b1020",
     title: "GafiPresence",
+    icon: path.join(__dirname, "assets", "gafipresence-logo.svg"),
     autoHideMenuBar: true,
     webPreferences: {
       preload: path.join(__dirname, "preload.cjs"),
@@ -384,6 +445,7 @@ ipcMain.handle("presence:open-developer-portal", () => shell.openExternal("https
 app.whenReady().then(() => {
   app.setAppUserModelId(APP_ID);
   loadSettings();
+  createDesktopShortcut();
   createWindow();
   if (settings.autoConnect && settings.clientId) connectDiscord().catch(() => {});
   app.on("activate", () => { if (BrowserWindow.getAllWindows().length === 0) createWindow(); });

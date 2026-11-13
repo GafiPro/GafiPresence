@@ -1,9 +1,9 @@
 const api = window.gafiPresence;
 const defaultPresets = [
-  { id: "starter-gaming", name: "Nebula Gaming", description: "Um visual roxo para sessões de jogo.", activity: { name: "GafiPresence", type: "PLAYING", details: "A jogar Rocket League", state: "Ranked 2v2 · Grinding", largeImageKey: "", largeImageText: "Nebula Gaming", largeImagePath: "builtin:large/nebula.svg", smallImageKey: "", smallImageText: "Online", smallImagePath: "builtin:small/orbit.svg", timerMode: "elapsed", elapsedSeconds: 0, countdownMinutes: 60, buttons: [{label:"",url:""},{label:"",url:""}] } },
-  { id: "starter-coding", name: "Developer Mode", description: "Uma presença minimalista para programar.", activity: { name: "GafiPresence", type: "PLAYING", details: "A escrever código", state: "A construir algo novo", largeImageKey: "", largeImageText: "Developer Mode", largeImagePath: "builtin:large/grid.svg", smallImageKey: "", smallImageText: "Coding", smallImagePath: "builtin:small/code.svg", timerMode: "elapsed", elapsedSeconds: 0, countdownMinutes: 60, buttons: [{label:"",url:""},{label:"",url:""}] } },
-  { id: "starter-music", name: "After Hours", description: "Gradientes e ondas para ouvir música.", activity: { name: "GafiPresence", type: "LISTENING", details: "A ouvir música", state: "After Hours", largeImageKey: "", largeImageText: "After Hours", largeImagePath: "builtin:large/waves.svg", smallImageKey: "", smallImageText: "Listening", smallImagePath: "builtin:small/music.svg", timerMode: "elapsed", elapsedSeconds: 0, countdownMinutes: 60, buttons: [{label:"",url:""},{label:"",url:""}] } },
-  { id: "starter-aurora", name: "Aurora", description: "Um fundo abstrato mais calmo e luminoso.", activity: { name: "GafiPresence", type: "WATCHING", details: "A desfrutar do momento", state: "Sem pressa.", largeImageKey: "", largeImageText: "Aurora", largeImagePath: "builtin:large/aurora.svg", smallImageKey: "", smallImageText: "Online", smallImagePath: "builtin:small/orbit.svg", timerMode: "none", elapsedSeconds: 0, countdownMinutes: 60, buttons: [{label:"",url:""},{label:"",url:""}] } }
+  { id: "starter-gaming", name: "Rocket League", description: "Uma presença pronta para as tuas partidas.", activity: { name: "GafiPresence", type: "PLAYING", details: "A jogar Rocket League", state: "Ranked 2v2 · Grinding", largeImageKey: "rocket_league", largeImageText: "Rocket League", largeImagePath: "builtin:games/rocket-league.webp", smallImageKey: "minecraft", smallImageText: "Minecraft", smallImagePath: "builtin:games/minecraft.webp", timerMode: "elapsed", elapsedSeconds: 0, countdownMinutes: 60, buttons: [{label:"",url:""},{label:"",url:""}] } },
+  { id: "starter-coding", name: "Minecraft", description: "Uma imagem voxel para o teu modo de programação.", activity: { name: "GafiPresence", type: "PLAYING", details: "A construir algo novo", state: "Creative mode", largeImageKey: "minecraft", largeImageText: "Minecraft", largeImagePath: "builtin:games/minecraft.webp", smallImageKey: "gafi_grid", smallImageText: "Coding", smallImagePath: "builtin:large/grid.webp", timerMode: "elapsed", elapsedSeconds: 0, countdownMinutes: 60, buttons: [{label:"",url:""},{label:"",url:""}] } },
+  { id: "starter-fortnite", name: "Fortnite", description: "Uma presença colorida para as tuas sessões.", activity: { name: "GafiPresence", type: "PLAYING", details: "A jogar Fortnite", state: "Battle Royale", largeImageKey: "fortnite", largeImageText: "Fortnite", largeImagePath: "builtin:games/fortnite.webp", smallImageKey: "rocket_league", smallImageText: "Gaming", smallImagePath: "builtin:games/rocket-league.webp", timerMode: "elapsed", elapsedSeconds: 0, countdownMinutes: 60, buttons: [{label:"",url:""},{label:"",url:""}] } },
+  { id: "starter-aurora", name: "Aurora", description: "Um fundo abstrato e luminoso.", activity: { name: "GafiPresence", type: "WATCHING", details: "A desfrutar do momento", state: "Sem pressa.", largeImageKey: "gafi_aurora", largeImageText: "Aurora", largeImagePath: "builtin:large/aurora.webp", smallImageKey: "gafi_circuit", smallImageText: "Online", smallImagePath: "builtin:large/circuit.webp", timerMode: "none", elapsedSeconds: 0, countdownMinutes: 60, buttons: [{label:"",url:""},{label:"",url:""}] } }
 ];
 
 let settings = null;
@@ -197,16 +197,22 @@ function renderPresets() {
     host.appendChild(card);
   });
 }
+const gameAssets = [
+  ["Rocket League","games/rocket-league.webp","rocket_league"],
+  ["Minecraft","games/minecraft.webp","minecraft"],
+  ["Fortnite","games/fortnite.webp","fortnite"]
+];
 const largeAssets = [
-  ["Nebula","large/nebula.svg"],["Grid","large/grid.svg"],["Waves","large/waves.svg"],["Aurora","large/aurora.svg"],["Circuit","large/circuit.svg"]
+  ["Aurora","large/aurora.webp","gafi_aurora"],
+  ["Grid","large/grid.webp","gafi_grid"],
+  ["Circuit","large/circuit.webp","gafi_circuit"]
 ];
-const smallAssets = [
-  ["Orbit","small/orbit.svg"],["Code","small/code.svg"],["Controller","small/controller.svg"],["Music","small/music.svg"]
-];
+const smallAssets = [...gameAssets, ...largeAssets];
 function renderGallery(hostSelector, assets, kind) {
   const host = $(hostSelector);
+  if (!host) return;
   host.replaceChildren();
-  assets.forEach(([label, file]) => {
+  assets.forEach(([label, file, imageKey]) => {
     const button = document.createElement("button");
     button.className = "asset-card";
     const image = document.createElement("img");
@@ -215,13 +221,23 @@ function renderGallery(hostSelector, assets, kind) {
     const caption = document.createElement("span");
     caption.textContent = label;
     button.append(image, caption);
-    button.addEventListener("click", () => {
+    button.classList.toggle("selected", settings.activity[kind + "ImagePath"] === "builtin:" + file);
+    button.addEventListener("click", async () => {
       settings.activity[kind + "ImagePath"] = "builtin:" + file;
+      settings.activity[kind + "ImageKey"] = imageKey;
       imageData[kind] = null;
       const keyField = $('[data-field="activity.' + kind + 'ImageKey"]');
-      if (!keyField.value) keyField.value = "";
+      if (keyField) keyField.value = imageKey;
+      const tooltipField = $('[data-field="activity.' + kind + 'ImageText"]');
+      if (tooltipField && !tooltipField.value) tooltipField.value = label;
       renderPreview();
-      notify(label + " selecionado para " + (kind === "large" ? "Large Image" : "Small Image") + ".");
+      try {
+        await persistSettings(false);
+        notify(label + " selecionado. Image Key preenchida: " + imageKey);
+      } catch (error) {
+        notify("Não foi possível guardar a imagem: " + error.message);
+      }
+      if ($("#page-assets").classList.contains("active")) renderAssets();
     });
     host.appendChild(button);
   });
@@ -245,6 +261,7 @@ function downloadAssetPng(kind) {
   image.src = previewImage(settings.activity[kind + "ImagePath"], kind);
 }
 function renderAssets() {
+  renderGallery("#game-gallery", gameAssets, "large");
   renderGallery("#large-gallery", largeAssets, "large");
   renderGallery("#small-gallery", smallAssets, "small");
   const host = $("#uploaded-assets");
@@ -267,6 +284,9 @@ async function pickImage(kind) {
   if (result.canceled) return;
   if (result.error) { notify(result.error); return; }
   settings.activity[kind + "ImagePath"] = result.path;
+  settings.activity[kind + "ImageKey"] = "";
+  const keyField = $('[data-field="activity.' + kind + 'ImageKey"]');
+  if (keyField) keyField.value = "";
   imageData[kind] = result.dataUrl;
   await persistSettings(false);
   renderPreview();

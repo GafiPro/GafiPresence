@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: file:; style-src 'self' 'unsafe-inline'; script-src 'self';">
   <title>GafiPresence</title>
+  <link rel="icon" href="../assets/gafipresence-logo.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
@@ -29,7 +30,7 @@
           <div class="connection-note" id="side-note">Configura o Discord para começar.</div>
           <button class="side-connect" id="side-connect">Ligar ao Discord</button>
         </div>
-        <div class="sidebar-footer"><span class="mini-logo">G</span><span>Gafi Tools</span><span class="version">v0.1.0</span></div>
+        <div class="sidebar-footer"><span class="mini-logo">G</span><span>Gafi Tools</span><span class="version">v0.2.0</span></div>
       </div>
     </aside>
 
@@ -80,7 +81,7 @@
                   <div class="inline-actions"><button class="mini-button" data-pick="small">Upload do computador</button><button class="mini-button" data-open-tab="assets">Escolher padrão</button></div>
                 </div>
               </div>
-              <p class="helper-note">Os uploads locais servem para a pré-visualização. Para aparecerem na presença real, publica-os em Rich Presence → Art Assets no Developer Portal e usa a chave do asset.</p>
+              <p class="helper-note">Os presets GafiPresence usam URLs públicas e funcionam automaticamente. Os uploads do teu computador são apenas pré-visualização: para os usar na presença real, publica-os em Rich Presence → Art Assets e introduz a respetiva key.</p>
             </section>
 
             <section class="panel">
@@ -92,7 +93,7 @@
                 </div>
               </div>
               <div class="field-grid timer-extra" id="timer-extra">
-                <label class="field"><span>Tempo decorrido (segundos)</span><input type="number" min="0" max="86400" data-field="activity.elapsedSeconds" value="0"></label>
+                <label class="field"><span>Tempo decorrido (segundos) <small>Sem limite artificial de 24 horas</small></span><input type="number" min="0" step="1" data-field="activity.elapsedSeconds" value="0"></label>
                 <label class="field" id="countdown-field"><span>Tempo restante (minutos)</span><input type="number" min="1" max="10080" data-field="activity.countdownMinutes" value="60"></label>
               </div>
               <div class="sub-divider"></div>
@@ -137,7 +138,8 @@
 
       <section class="page" id="page-assets">
         <div class="page-intro"><div class="eyebrow">BIBLIOTECA VISUAL</div><h1>Assets <span>à tua medida.</span></h1><p class="intro-copy">Escolhe uma imagem de exemplo ou faz upload de ficheiros do teu computador.</p></div>
-        <div class="asset-notice"><span>ⓘ</span><div><b>Imagem local e imagem Discord são coisas diferentes.</b><p>O ficheiro local aparece na pré-visualização. Para aparecer no perfil Discord, publica-o na página Art Assets da tua aplicação e coloca a respetiva key no Editor.</p></div></div>
+        <div class="asset-notice"><span>ⓘ</span><div><b>Os presets incluídos já funcionam no Discord.</b><p>Rocket League, Minecraft, Fortnite e os fundos Gafi usam imagens públicas HTTPS. Os uploads locais continuam a servir apenas para pré-visualização; publica imagens tuas em Rich Presence → Art Assets para as poderes usar.</p></div></div>
+        <div class="asset-section"><div class="asset-section-head"><div><h2>Jogos predefinidos</h2><p>Clica num jogo para preencher automaticamente a Large Image Key com o seu nome.</p></div></div><div class="asset-grid game-grid" id="game-gallery"></div></div>
         <div class="asset-section"><div class="asset-section-head"><div><h2>Large Image</h2><p>Artwork principal · recomenda-se 1024 × 1024</p></div><button class="button button-quiet" data-pick="large">Upload Large Image</button></div><div class="asset-grid" id="large-gallery"></div></div>
         <div class="asset-section"><div class="asset-section-head"><div><h2>Small Image</h2><p>Ícone sobreposto · recomenda-se 512 × 512</p></div><button class="button button-quiet" data-pick="small">Upload Small Image</button></div><div class="asset-grid small-gallery" id="small-gallery"></div></div>
         <div class="asset-uploaded" id="uploaded-assets"></div>
@@ -156,7 +158,7 @@
             <label class="field"><span>Cor de destaque</span><div class="color-row"><input type="color" id="accent-color" value="#8175f5"><span id="accent-value">#8175F5</span></div></label>
             <p class="helper-note">A cor é aplicada aos botões, destaques e elementos selecionados.</p>
           </section>
-          <section class="panel settings-panel"><div class="panel-heading"><div><div class="section-kicker">SOBRE</div><h2>GafiPresence v0.1.0</h2></div><span class="panel-mark">03</span></div><p class="settings-description">Um editor independente de Discord Rich Presence, desenvolvido pela GafiPro. Não precisa de bot token, não lê mensagens e não envia os teus uploads para um servidor externo.</p><div class="about-links"><a href="https://github.com/GafiPro/GafiSpeak/tree/feat/gafipresence-initial/GafiPresence" target="_blank" rel="noreferrer">Código-fonte no GitHub ↗</a><a href="https://discord.com/developers/docs/rich-presence/how-to" target="_blank" rel="noreferrer">Documentação Rich Presence ↗</a></div></section>
+          <section class="panel settings-panel"><div class="panel-heading"><div><div class="section-kicker">SOBRE</div><h2>GafiPresence v0.2.0</h2></div><span class="panel-mark">03</span></div><p class="settings-description">Um editor independente de Discord Rich Presence, desenvolvido pela GafiPro. Não precisa de bot token, não lê mensagens e não envia os teus uploads para um servidor externo.</p><div class="about-links"><a href="https://github.com/GafiPro/GafiPresence" target="_blank" rel="noreferrer">Código-fonte no GitHub ↗</a><a href="https://discord.com/developers/docs/rich-presence/how-to" target="_blank" rel="noreferrer">Documentação Rich Presence ↗</a></div></section>
         </div>
       </section>
 

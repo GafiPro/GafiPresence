@@ -7,6 +7,9 @@ A clean Windows desktop editor for custom Discord Rich Presence. Built as a stan
 - Live Discord-style preview while editing.
 - Configurable activity name, details, state and activity type.
 - Large and small image keys, hover tooltips and up to two buttons.
+- Built-in Rocket League, Minecraft and Fortnite artwork, plus original Gafi backgrounds. Selecting a preset fills the short image key automatically and resolves it to a public HTTPS image.
+- Desktop shortcut creation/update on first portable launch, using the GafiPresence application icon.
+- Elapsed timer with no artificial 24-hour cap.
 - Elapsed-time and countdown modes.
 - Built-in original SVG artwork gallery.
 - Upload local PNG, JPG, WEBP and GIF files for previews and local asset management.
@@ -43,13 +46,13 @@ The portable executable is written to \`dist/\`.
 1. Open the [Discord Developer Portal](https://discord.com/developers/applications).
 2. Create or select an application.
 3. Copy its Application ID into **Settings → Discord Application ID** in GafiPresence.
-4. Open **Rich Presence → Art Assets** in that application to upload images you want to display.
-5. Give each uploaded asset a key, then put that exact key in the Large Image or Small Image key field.
+4. The built-in presets (Rocket League, Minecraft, Fortnite, Aurora, Grid and Circuit) are ready to use. Selecting one in **Assets** fills the Image Key field with its short name; GafiPresence resolves it to a public HTTPS image automatically.
+5. For your own images, open **Rich Presence → Art Assets** in that application, upload the image, give it a key, then enter that exact key in the Large Image or Small Image field. Alternatively, enter a publicly accessible HTTPS image URL.
 6. Keep the Discord desktop app open and press **Connect**, then **Apply presence**.
 
 ### Important: local uploads vs Discord assets
 
-An image uploaded from your computer is stored locally by GafiPresence and is immediately available in the editor preview and asset gallery. The local file path itself cannot be sent as a Discord image key. Use the **Transferir Large PNG** or **Transferir Small PNG** buttons on the Assets page to export the selected artwork, upload that PNG to your Discord application's Rich Presence Art Assets and enter its asset key in GafiPresence. A supported external image URL can also be entered as the image key.
+An image uploaded from your computer is stored locally by GafiPresence and is available in the editor preview. The local file path itself cannot be sent to Discord. For a custom upload, use **Transferir Large PNG** or **Transferir Small PNG**, upload that PNG to your Discord application's Rich Presence Art Assets and enter its asset key. The included game and Gafi backgrounds are different: they use public HTTPS URLs and therefore work without a manual upload.
 
 The app keeps the local preview path and the Discord asset key as separate values so the preview never implies an image was published when it was not.
 
