@@ -166,7 +166,7 @@ h2 { margin: 5px 0 0; font-size: 14px; font-weight: 760; letter-spacing: -.25px;
 .asset-grid { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 10px; }
 .asset-card { min-width: 0; padding: 7px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); text-align: left; color: #c7cee2; transition: .15s ease; }
 .asset-card:hover,.asset-card.selected { border-color: rgba(156,145,255,.6); background: rgba(129,117,245,.09); transform: translateY(-1px); }
-.asset-card img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 6px; background: #171e35; }
+.asset-card img { display: block; width: 100%; aspect-ratio: 1; object-fit: contain; padding: 9px; border-radius: 6px; background: #f3f4f6; }
 .asset-card span { display: block; overflow: hidden; margin: 8px 2px 2px; text-overflow: ellipsis; white-space: nowrap; font-size: 8px; font-weight: 700; }
 .small-gallery .asset-card img { width: 64px; margin: auto; border-radius: 50%; }
 .asset-uploaded { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 18px; }
