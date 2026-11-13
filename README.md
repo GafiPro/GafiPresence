@@ -70,7 +70,7 @@ Game names and logos remain the property of their respective owners. GafiPresenc
 - Details and State are limited to 128 characters each.
 - A maximum of two custom buttons is supported.
 - Button URLs must be valid HTTP or HTTPS links.
-- Elapsed and countdown timers are sent as Unix timestamps in seconds, as required by Discord RPC.
+- Elapsed and countdown timers use JavaScript `Date` values, serialized by the RPC library as Unix timestamps in milliseconds.
 - RPC is local to the Discord desktop client. This is not a bot and does not require a bot token.
 
 ## Local data and privacy
