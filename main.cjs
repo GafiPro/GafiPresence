@@ -289,11 +289,12 @@ function createActivity(source) {
   if (source.timerMode === "elapsed") {
     const parsedElapsed = Number(source.elapsedSeconds);
     const elapsed = Number.isFinite(parsedElapsed) ? Math.max(0, parsedElapsed) : 0;
-    // A única fronteira é a gama válida do Date do JavaScript (muito além de qualquer uso prático).
-    const maxElapsedSeconds = 8.64e12;
-    // A biblioteca @xhayper/discord-rpc serializa Date para Unix em milissegundos,
-    // que é o formato usado pelo payload de Activity do Discord.
-    activity.startTimestamp = new Date(Date.now() - Math.floor(Math.min(elapsed, maxElapsedSeconds)) * 1000);
+    // O Discord espera Unix time em milissegundos e não aceita timestamps anteriores à época Unix.
+    // Assim, não há limite artificial de 24 horas: o único limite real é 1 de janeiro de 1970.
+    const now = Date.now();
+    const maxElapsedMilliseconds = Math.max(0, now - 1);
+    const elapsedMilliseconds = Math.min(elapsed * 1000, maxElapsedMilliseconds);
+    activity.startTimestamp = new Date(Math.max(1, now - elapsedMilliseconds));
   } else if (source.timerMode === "countdown") {
     const minutes = Math.max(1, Math.min(10080, Number(source.countdownMinutes) || 60));
     activity.endTimestamp = new Date(Date.now() + minutes * 60000);
@@ -316,7 +317,8 @@ async function applyActivity(source) {
     await rpcClient.user.setActivity(activity);
     return { ok: true, message: "Rich Presence enviada para o Discord." };
   } catch (error) {
-    return { ok: false, message: error.message || "Não foi possível atualizar a Rich Presence." };
+    const reason = error && error.message ? error.message : String(error || "Erro desconhecido.");
+    return { ok: false, message: "O Discord recusou a presença: " + reason };
   }
 }
 
