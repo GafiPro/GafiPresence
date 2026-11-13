@@ -1,5 +1,9 @@
 name: GafiPresence Windows build
 
+concurrency:
+  group: gafipresence-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     branches:
@@ -42,5 +46,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: GafiPresence-Windows-Portable
-          path: dist/GafiPresence-0.2.0-Portable.exe
+          path: dist/GafiPresence-*-Portable.exe
           if-no-files-found: error
