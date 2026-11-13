@@ -7,7 +7,7 @@ A clean Windows desktop editor for custom Discord Rich Presence. Built as a stan
 - Live Discord-style preview while editing.
 - Configurable activity name, details, state and activity type.
 - Large and small image keys, hover tooltips and up to two buttons.
-- Official Rocket League, Minecraft and Fortnite wordmark logos in the game gallery, plus original Gafi backgrounds. Selecting a game fills its image key automatically and uses the public logo image URL.
+- Official Rocket League, Minecraft and Fortnite logos in the game gallery, plus original Gafi backgrounds. Selecting a game fills its image key; if Discord is already connected, the image is applied immediately.
 - Desktop shortcut creation/update on first portable launch, using the GafiPresence application icon.
 - Elapsed timer with no artificial 24-hour cap.
 - Elapsed-time and countdown modes.
