@@ -1,8 +1,8 @@
 const api = window.gafiPresence;
 const defaultPresets = [
-  { id: "starter-gaming", name: "Rocket League", description: "Uma presença pronta para as tuas partidas.", activity: { name: "GafiPresence", type: "PLAYING", details: "A jogar Rocket League", state: "Ranked 2v2 · Grinding", largeImageKey: "rocket_league", largeImageText: "Rocket League", largeImagePath: "builtin:games/rocket-league.webp", smallImageKey: "minecraft", smallImageText: "Minecraft", smallImagePath: "builtin:games/minecraft.webp", timerMode: "elapsed", elapsedSeconds: 0, countdownMinutes: 60, buttons: [{label:"",url:""},{label:"",url:""}] } },
-  { id: "starter-coding", name: "Minecraft", description: "Uma imagem voxel para o teu modo de programação.", activity: { name: "GafiPresence", type: "PLAYING", details: "A construir algo novo", state: "Creative mode", largeImageKey: "minecraft", largeImageText: "Minecraft", largeImagePath: "builtin:games/minecraft.webp", smallImageKey: "gafi_grid", smallImageText: "Coding", smallImagePath: "builtin:large/grid.webp", timerMode: "elapsed", elapsedSeconds: 0, countdownMinutes: 60, buttons: [{label:"",url:""},{label:"",url:""}] } },
-  { id: "starter-fortnite", name: "Fortnite", description: "Uma presença colorida para as tuas sessões.", activity: { name: "GafiPresence", type: "PLAYING", details: "A jogar Fortnite", state: "Battle Royale", largeImageKey: "fortnite", largeImageText: "Fortnite", largeImagePath: "builtin:games/fortnite.webp", smallImageKey: "rocket_league", smallImageText: "Gaming", smallImagePath: "builtin:games/rocket-league.webp", timerMode: "elapsed", elapsedSeconds: 0, countdownMinutes: 60, buttons: [{label:"",url:""},{label:"",url:""}] } },
+  { id: "starter-gaming", name: "Rocket League", description: "Uma presença pronta para as tuas partidas.", activity: { name: "GafiPresence", type: "PLAYING", details: "A jogar Rocket League", state: "Ranked 2v2 · Grinding", largeImageKey: "rocket_league", largeImageText: "Rocket League", largeImagePath: "external:https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Rocket_League_logo.svg/512px-Rocket_League_logo.svg.png", smallImageKey: "minecraft", smallImageText: "Minecraft", smallImagePath: "external:https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Minecraft_Logo-en.svg/512px-Minecraft_Logo-en.svg.png", timerMode: "elapsed", elapsedSeconds: 0, countdownMinutes: 60, buttons: [{label:"",url:""},{label:"",url:""}] } },
+  { id: "starter-coding", name: "Minecraft", description: "Uma imagem voxel para o teu modo de programação.", activity: { name: "GafiPresence", type: "PLAYING", details: "A construir algo novo", state: "Creative mode", largeImageKey: "minecraft", largeImageText: "Minecraft", largeImagePath: "external:https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Minecraft_Logo-en.svg/512px-Minecraft_Logo-en.svg.png", smallImageKey: "gafi_grid", smallImageText: "Coding", smallImagePath: "builtin:large/grid.webp", timerMode: "elapsed", elapsedSeconds: 0, countdownMinutes: 60, buttons: [{label:"",url:""},{label:"",url:""}] } },
+  { id: "starter-fortnite", name: "Fortnite", description: "Uma presença colorida para as tuas sessões.", activity: { name: "GafiPresence", type: "PLAYING", details: "A jogar Fortnite", state: "Battle Royale", largeImageKey: "fortnite", largeImageText: "Fortnite", largeImagePath: "external:https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/FortniteLogo.svg/512px-FortniteLogo.svg.png", smallImageKey: "rocket_league", smallImageText: "Gaming", smallImagePath: "external:https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Rocket_League_logo.svg/512px-Rocket_League_logo.svg.png", timerMode: "elapsed", elapsedSeconds: 0, countdownMinutes: 60, buttons: [{label:"",url:""},{label:"",url:""}] } },
   { id: "starter-aurora", name: "Aurora", description: "Um fundo abstrato e luminoso.", activity: { name: "GafiPresence", type: "WATCHING", details: "A desfrutar do momento", state: "Sem pressa.", largeImageKey: "gafi_aurora", largeImageText: "Aurora", largeImagePath: "builtin:large/aurora.webp", smallImageKey: "gafi_circuit", smallImageText: "Online", smallImagePath: "builtin:large/circuit.webp", timerMode: "none", elapsedSeconds: 0, countdownMinutes: 60, buttons: [{label:"",url:""},{label:"",url:""}] } }
 ];
 
@@ -75,6 +75,7 @@ function previewImage(pathValue, kind) {
   if (kind === "large" && imageData.large && pathValue && !pathValue.startsWith("builtin:")) return imageData.large;
   if (kind === "small" && imageData.small && pathValue && !pathValue.startsWith("builtin:")) return imageData.small;
   const path = String(pathValue || "");
+  if (path.startsWith("external:")) return path.slice(9);
   if (path.startsWith("builtin:")) return "../assets/presets/" + path.slice(8);
   return kind === "large" ? "../assets/presets/large/nebula.svg" : "../assets/presets/small/orbit.svg";
 }
@@ -153,7 +154,8 @@ function renderPresets() {
   $("#preset-empty").classList.toggle("visible", presets.length === 0);
   presets.forEach((preset) => {
     const large = preset.activity && preset.activity.largeImagePath || "builtin:large/nebula.svg";
-    const src = large.startsWith("builtin:") ? "../assets/presets/" + large.slice(8) : "../assets/presets/large/nebula.svg";
+    const src = large.startsWith("external:") ? large.slice(9) :
+      large.startsWith("builtin:") ? "../assets/presets/" + large.slice(8) : "../assets/presets/large/nebula.svg";
     const card = document.createElement("article");
     card.className = "preset-card";
     const cover = document.createElement("div");
@@ -198,9 +200,9 @@ function renderPresets() {
   });
 }
 const gameAssets = [
-  ["Rocket League","games/rocket-league.webp","rocket_league"],
-  ["Minecraft","games/minecraft.webp","minecraft"],
-  ["Fortnite","games/fortnite.webp","fortnite"]
+  ["Rocket League","https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Rocket_League_logo.svg/512px-Rocket_League_logo.svg.png","rocket_league"],
+  ["Minecraft","https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Minecraft_Logo-en.svg/512px-Minecraft_Logo-en.svg.png","minecraft"],
+  ["Fortnite","https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/FortniteLogo.svg/512px-FortniteLogo.svg.png","fortnite"]
 ];
 const largeAssets = [
   ["Aurora","large/aurora.webp","gafi_aurora"],
@@ -215,15 +217,18 @@ function renderGallery(hostSelector, assets, kind) {
   assets.forEach(([label, file, imageKey]) => {
     const button = document.createElement("button");
     button.className = "asset-card";
+    const isExternal = /^https:\/\//i.test(file);
+    const storedPath = isExternal ? "external:" + file : "builtin:" + file;
     const image = document.createElement("img");
-    image.src = "../assets/presets/" + file;
+    image.src = isExternal ? file : "../assets/presets/" + file;
     image.alt = label;
+    image.loading = "lazy";
     const caption = document.createElement("span");
     caption.textContent = label;
     button.append(image, caption);
-    button.classList.toggle("selected", settings.activity[kind + "ImagePath"] === "builtin:" + file);
+    button.classList.toggle("selected", settings.activity[kind + "ImagePath"] === storedPath);
     button.addEventListener("click", async () => {
-      settings.activity[kind + "ImagePath"] = "builtin:" + file;
+      settings.activity[kind + "ImagePath"] = storedPath;
       settings.activity[kind + "ImageKey"] = imageKey;
       imageData[kind] = null;
       const keyField = $('[data-field="activity.' + kind + 'ImageKey"]');
@@ -268,7 +273,7 @@ function renderAssets() {
   host.replaceChildren();
   ["large", "small"].forEach((kind) => {
     const path = settings.activity[kind + "ImagePath"];
-    if (!path || path.startsWith("builtin:")) return;
+    if (!path || path.startsWith("builtin:") || path.startsWith("external:")) return;
     const chip = document.createElement("div");
     chip.className = "uploaded-chip";
     const img = document.createElement("img");
