@@ -46,8 +46,8 @@ The portable executable is written to \`dist/\`.
 1. Open the [Discord Developer Portal](https://discord.com/developers/applications).
 2. Create or select an application.
 3. Copy its Application ID into **Settings → Discord Application ID** in GafiPresence.
-4. The built-in presets (Rocket League, Minecraft, Fortnite, Aurora, Grid and Circuit) are ready to use. The three game entries display their actual game logos (not generated artwork). Selecting one in **Assets** fills the Image Key field with its short name; GafiPresence resolves it to a public HTTPS image URL automatically. An internet connection is required for these external logos.
-5. For your own images, open **Rich Presence → Art Assets** in that application, upload the image, give it a key, then enter that exact key in the Large Image or Small Image field. Alternatively, enter a publicly accessible HTTPS image URL.
+4. The built-in presets (Rocket League, Minecraft, Fortnite, Aurora, Grid and Circuit) are ready to use. The three game entries display official game logos. Selecting a game fills its key and, when Discord is connected, immediately updates the presence. Preset cards now apply the activity directly instead of only loading it into the editor. The built-in game logos use public HTTPS image URLs; an internet connection is required.
+5. For your own images, open **Rich Presence → Art Assets** in that application, upload the image, give it a key, then enter that exact key in the Large Image or Small Image field. Alternatively, enter a publicly accessible HTTPS image URL. External HTTPS image URLs are supported by Discord Rich Presence for both large and small images.
 6. Keep the Discord desktop app open and press **Connect**, then **Apply presence**.
 
 ### Important: local uploads vs Discord assets
@@ -61,6 +61,14 @@ The app keeps the local preview path and the Discord asset key as separate value
 - Rocket League logo: Psyonix, via Wikimedia Commons, licensed CC BY-SA 4.0. Source: https://commons.wikimedia.org/wiki/File:Rocket_League_logo.svg
 - Minecraft logo: Mojang Studios, via Wikimedia Commons. Source: https://commons.wikimedia.org/wiki/File:Minecraft_Logo-en.svg
 - Fortnite logo: Epic Games, via Wikimedia Commons. Source: https://commons.wikimedia.org/wiki/File:FortniteLogo.svg
+
+Game names and logos remain the property of their respective owners. GafiPresence is an independent fan-made utility and is not affiliated with or endorsed by these publishers.
+
+## Game logo sources and attribution
+
+- Rocket League logo: Psyonix, via Wikimedia Commons, CC BY-SA 4.0: https://commons.wikimedia.org/wiki/File:Rocket_League_logo.svg
+- Minecraft logo: Mojang Studios, via Wikimedia Commons: https://commons.wikimedia.org/wiki/File:Minecraft_Logo-en.svg
+- Fortnite logo: Epic Games, via Wikimedia Commons: https://commons.wikimedia.org/wiki/File:FortniteLogo.svg
 
 Game names and logos remain the property of their respective owners. GafiPresence is an independent fan-made utility and is not affiliated with or endorsed by these publishers.
 
