@@ -291,13 +291,12 @@ function createActivity(source) {
     const elapsed = Number.isFinite(parsedElapsed) ? Math.max(0, parsedElapsed) : 0;
     // A única fronteira é a gama válida do Date do JavaScript (muito além de qualquer uso prático).
     const maxElapsedSeconds = 8.64e12;
-    const nowUnixSeconds = Math.floor(Date.now() / 1000);
-    // A biblioteca RPC envia Date.getTime() em milissegundos, mas o Discord exige Unix time em segundos.
-    // Passar um número em segundos evita o erro "Child activity fails" na validação de timestamps.
-    activity.startTimestamp = Math.max(1, nowUnixSeconds - Math.floor(Math.min(elapsed, maxElapsedSeconds)));
+    // A biblioteca @xhayper/discord-rpc serializa Date para Unix em milissegundos,
+    // que é o formato usado pelo payload de Activity do Discord.
+    activity.startTimestamp = new Date(Date.now() - Math.floor(Math.min(elapsed, maxElapsedSeconds)) * 1000);
   } else if (source.timerMode === "countdown") {
     const minutes = Math.max(1, Math.min(10080, Number(source.countdownMinutes) || 60));
-    activity.endTimestamp = Math.floor(Date.now() / 1000) + minutes * 60;
+    activity.endTimestamp = new Date(Date.now() + minutes * 60000);
   }
 
   const buttons = Array.isArray(source.buttons) ? source.buttons.slice(0, 2).map(validButton).filter(Boolean) : [];
